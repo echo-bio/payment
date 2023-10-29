@@ -7,23 +7,33 @@ import com.echobio.payment.dao.mapper.OrderMapper;
 import com.echobio.payment.dao.po.OrderPO;
 import com.echobio.payment.dto.OrderDTO;
 import com.echobio.payment.service.OrderService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import com.google.gson.Gson;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.annotation.Resource;
 import java.math.BigDecimal;
 import java.util.Random;
+
+import static com.echobio.payment.constants.QiufengConstant.AMOUNT_REDIS_KEY;
 
 /**
  * 订单接口实现类
  *
  */
 @Service
+@Slf4j
 public class OrderServiceImpl extends ServiceImpl<OrderMapper, OrderPO> implements OrderService {
 
-    private static final Logger logger = LoggerFactory.getLogger(OrderServiceImpl.class);
+    @Autowired
+    private Gson gson;
+
+    @Resource
+    private RedisTemplate redisTemplate;
 
     /**
      * 保存订单信息
@@ -34,6 +44,7 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, OrderPO> implemen
     @Override
     @Transactional(rollbackFor = Exception.class)
     public OrderPO createOrder(OrderDTO orderDto) throws BusinessException {
+        log.info("start to create order with param{}", gson.toJson(orderDto));
         // create order with orderNo
         OrderPO orderPO = new OrderPO();
         BeanUtils.copyProperties(orderDto, orderPO);
@@ -42,15 +53,28 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, OrderPO> implemen
         orderPO.setOrderNo(String.valueOf(orderNo));
         // calculate order amount ,todo minus point
         // generate random discount for qiufeng todo will be deprecated
-        Random random = new Random();
-        double discount = random.nextInt(100)*0.01;
-        orderPO.setDiscount(discount);
         Double payAmount = orderDto.getAmount();
-        //minus discount
-        payAmount -= discount;
         // update point table if use point
         //todo redis lock the payAmount because qiufeng dont allow same amount exist at the same time
+        boolean amountNotPaid = redisTemplate.opsForHash().hasKey(AMOUNT_REDIS_KEY, payAmount);
+        if (amountNotPaid){
+            double discountAmount;
+            do {
+                discountAmount = payAmount;
+                Random random = new Random();
+                double discount = random.nextInt(100)*0.01;
+                orderPO.setDiscount(discount);
+                discountAmount -= discount;
+            } while (discountAmount <=0);
+            payAmount = discountAmount;
+            amountNotPaid = redisTemplate.opsForHash().hasKey(AMOUNT_REDIS_KEY, payAmount);
+            if (amountNotPaid){
+                throw new BusinessException("创建订单失败，请稍后再试");
+            }
+        }
+        redisTemplate.opsForHash().put(AMOUNT_REDIS_KEY, payAmount, System.currentTimeMillis());
         orderPO.setPayAmount(payAmount);
+        save(orderPO);
         return orderPO;
     }
 

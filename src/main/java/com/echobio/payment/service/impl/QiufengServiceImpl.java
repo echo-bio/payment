@@ -2,6 +2,7 @@ package com.echobio.payment.service.impl;
 
 import cn.hutool.crypto.digest.MD5;
 import cn.hutool.http.HttpUtil;
+import com.echobio.payment.common.exception.BusinessException;
 import com.echobio.payment.service.QiufengService;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -21,19 +22,27 @@ public class QiufengServiceImpl implements QiufengService {
     @Override
     public String submitPayment(Map<String, Object> params) {
         log.info("call qiufeng service with param:{}", params);
+        //todo remove below codes
         params.put("money", 1.00);
-        params.put("name", "test"+System.currentTimeMillis());
+        params.put("name", "test" + System.currentTimeMillis());
         params.put("type", "wxpay");
         params.put("out_trade_no", System.currentTimeMillis());
 
-        params.put("notify_url", "//www.cccyun.cc/notify_url.php");
-        params.put("pid", PID);
-        params.put("return_url", "http://echo-bio.cn:8088/");
-        params.put("sitename", "echo-bio");
-        String sign = generateSign(params);
-        params.put("sign", sign);
-        params.put("sign_type", "MD5");
-        String url = URL_PREFIX + createLinkStringByGet(params);
+        String url = "";
+        try {
+            params.put("notify_url", "//www.cccyun.cc/notify_url.php");
+            params.put("pid", PID);
+            params.put("return_url", "http://echo-bio.cn:8088/");
+            params.put("sitename", "echo-bio");
+            String sign = generateSign(params);
+            params.put("sign", sign);
+            params.put("sign_type", "MD5");
+            url = URL_PREFIX + createLinkStringByGet(params);
+            HttpUtil.get(url);
+        } catch (Exception e) {
+            log.error("error occurs when call qiufeng platform with url {}", url, e);
+            throw new BusinessException(String.format("error occurs when call qiufeng platform with url %s", url), e);
+        }
         String responseHtml = HttpUtil.get(url);
         return responseHtml.replace("Submit", "https://mpay.qfysc.cn/Submit");
     }
@@ -61,23 +70,4 @@ public class QiufengServiceImpl implements QiufengService {
         }
         return stringBuilder.toString();
     }
-
-//    public static void main(String[] args) {
-//        Map<String,Object> param = new HashMap<>();
-//        param.put("money", "0.01");
-//        param.put("name", "生信分析");
-//        param.put("notify_url", "\t//www.cccyun.cc/notify_url.php");
-//        param.put("out_trade_no", "1234567");
-//        param.put("pid", 140453069);
-//        param.put("return_url", "//www.cccyun.cc/return_url.php");
-//        param.put("sitename", "echo-bio");
-//        param.put("type", "wxpay");
-//        String sign = generateSign(param);
-//        param.put("sign", sign);
-//        param.put("sign_type", "MD5");
-//        val post = HttpUtil.post(URL_PREFIX, createLinkStringByGet(param));
-//        System.out.println(post);
-//
-//        System.out.println(createLinkStringByGet(param));
-//    }
 }

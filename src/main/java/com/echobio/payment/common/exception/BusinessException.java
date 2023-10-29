@@ -11,6 +11,11 @@ public class BusinessException extends RuntimeException {
         super();
     }
 
+    public BusinessException(String errMsg) {
+        super(errMsg);
+        this.errMsg = errMsg;
+    }
+
     public BusinessException(String errMsg, Throwable e) {
         super(errMsg, e);
         this.errMsg = errMsg;

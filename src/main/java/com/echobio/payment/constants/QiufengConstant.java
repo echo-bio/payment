@@ -7,4 +7,6 @@ public class QiufengConstant {
     public static final int PID = 140453069;
 
     public static final String KEY = "Ow0HQiPZ2ci";
+
+    public static final String AMOUNT_REDIS_KEY= "echobio:amount";
 }
