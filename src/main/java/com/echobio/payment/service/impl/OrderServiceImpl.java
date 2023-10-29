@@ -49,8 +49,7 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, OrderPO> implemen
         //minus discount
         payAmount -= discount;
         // update point table if use point
-        //redis lock the payAmount because qiufeng dont allow same amount exist at the same time
-
+        //todo redis lock the payAmount because qiufeng dont allow same amount exist at the same time
         orderPO.setPayAmount(payAmount);
         return orderPO;
     }

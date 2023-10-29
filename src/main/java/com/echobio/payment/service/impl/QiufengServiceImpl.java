@@ -3,6 +3,7 @@ package com.echobio.payment.service.impl;
 import cn.hutool.crypto.digest.MD5;
 import cn.hutool.http.HttpUtil;
 import com.echobio.payment.service.QiufengService;
+import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.springframework.stereotype.Service;
 
@@ -11,22 +12,19 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
+import static com.echobio.payment.constants.QiufengConstant.*;
+
 @Service
+@Slf4j
 public class QiufengServiceImpl implements QiufengService {
-
-    public static final String URL_PREFIX = "https://mpay.qfysc.cn/submit.php?";
-
-    public static final int PID = 140453069;
-
-    public static final String KEY = "Ow0HQiPZ2ci";
 
     @Override
     public String submitPayment(Map<String, Object> params) {
+        log.info("call qiufeng service with param:{}", params);
         params.put("money", 1.00);
         params.put("name", "test"+System.currentTimeMillis());
         params.put("type", "wxpay");
         params.put("out_trade_no", System.currentTimeMillis());
-
 
         params.put("notify_url", "//www.cccyun.cc/notify_url.php");
         params.put("pid", PID);
