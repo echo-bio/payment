@@ -1,6 +1,8 @@
 package com.echobio.payment.service.impl;
 
 import cn.hutool.core.util.IdUtil;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.echobio.payment.common.exception.BusinessException;
 import com.echobio.payment.dao.mapper.OrderMapper;
@@ -81,5 +83,19 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, OrderPO> implemen
     @Override
     public Boolean setOrderPayed(Integer orderId, BigDecimal payAmount) throws BusinessException {
         return null;
+    }
+
+    @Override
+    public Boolean updateByTradeNo(OrderPO orderPO) {
+        UpdateWrapper<OrderPO> updateWrapper = new UpdateWrapper<>();
+        updateWrapper.eq("trade_no", orderPO.getOrderNo());
+        return update(orderPO, updateWrapper);
+    }
+
+    @Override
+    public OrderPO getByTradeNo(String outTradeNo) {
+        QueryWrapper<OrderPO> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("trade_no", outTradeNo);
+        return getOne(queryWrapper);
     }
 }

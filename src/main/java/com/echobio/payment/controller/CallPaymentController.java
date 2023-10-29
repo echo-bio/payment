@@ -1,6 +1,7 @@
 package com.echobio.payment.controller;
 
 import com.echobio.payment.controller.request.CallPaymentRequest;
+import com.echobio.payment.controller.request.PaymentCallbackRequest;
 import com.echobio.payment.service.PaymentService;
 import lombok.val;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,10 +27,10 @@ public class CallPaymentController {
         return paymentService.doPay(request);
     }
 
-//    @GetMapping(value = "/callback")
-//    public void callbackPayment(@RequestBody PaymentCallbackRequest request){
-//        return;paymentService.callback(request);
-//    }
+    @GetMapping(value = "/callback")
+    public void callbackPayment(PaymentCallbackRequest request){
+        paymentService.callback(request);
+    }
 
 //    @GetMapping(value = "Submit/Mym_Pay.php")
 //    public HttpServletResponse redirectQiufeng(@RequestParam("trade_no" String tradeNo)) {

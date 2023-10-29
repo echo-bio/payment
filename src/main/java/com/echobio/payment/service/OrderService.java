@@ -32,4 +32,8 @@ public interface OrderService extends IService<OrderPO> {
      * @return
      * */
     Boolean setOrderPayed(Integer orderId, BigDecimal payAmount) throws BusinessException;
+
+    Boolean updateByTradeNo(OrderPO orderPO);
+
+    OrderPO getByTradeNo(String outTradeNo);
 }
