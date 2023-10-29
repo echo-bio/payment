@@ -25,5 +25,18 @@ bin/
 ### VS Code ###
 .vscode/
 
+.buildpath
+.project
+.settings
+.idea/
+.mvn/
+wsdl/
+caches/
+target/
+src/main/resources/static/
+.DS_Store
+*.iml
+dump.rdb
+
 ### Mac OS ###
 .DS_Store
