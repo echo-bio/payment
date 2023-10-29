@@ -3,6 +3,17 @@ out/
 !**/src/main/**/out/
 !**/src/test/**/out/
 .idea/
+.buildpath
+.project
+.settings
+.mvn/
+wsdl/
+caches/
+target/
+src/main/resources/static/
+.DS_Store
+*.iml
+dump.rdb
 
 ### Eclipse ###
 .apt_generated
@@ -25,18 +36,5 @@ bin/
 
 ### VS Code ###
 .vscode/
-
-.buildpath
-.project
-.settings
-.mvn/
-wsdl/
-caches/
-target/
-src/main/resources/static/
-.DS_Store
-*.iml
-dump.rdb
-
 ### Mac OS ###
 .DS_Store
