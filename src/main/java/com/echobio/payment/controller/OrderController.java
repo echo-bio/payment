@@ -5,6 +5,7 @@ import com.echobio.payment.controller.response.BaseResponse;
 import com.echobio.payment.dao.po.OrderPO;
 import com.echobio.payment.dto.OrderDTO;
 import com.echobio.payment.service.OrderService;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -19,6 +20,7 @@ public class OrderController {
     private OrderService orderService;
 
     @PostMapping("/order")
+    @ApiOperation(value = "create payment order")
     public BaseResponse createOrder(@RequestBody CreateOrderRequest request) {
         //check request
         try {

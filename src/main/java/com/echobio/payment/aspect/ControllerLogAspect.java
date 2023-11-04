@@ -2,12 +2,14 @@ package com.echobio.payment.aspect;
 
 import cn.hutool.core.bean.BeanUtil;
 import com.google.gson.Gson;
+import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.Signature;
 import org.aspectj.lang.annotation.*;
+import org.aspectj.lang.reflect.MethodSignature;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.request.RequestContextHolder;
@@ -47,6 +49,13 @@ public class ControllerLogAspect {
         log.info("IP             : {}", request.getRemoteAddr());
         // pprint request params
         log.info("Request Args   : {}", new Gson().toJson(joinPoint.getArgs()));
+
+        ApiOperation apiOperation = null;
+        MethodSignature ms = (MethodSignature) joinPoint.getSignature();
+        apiOperation = ms.getMethod().getDeclaredAnnotation(ApiOperation.class);
+        if (apiOperation != null) { ;
+            log.info("operation   : {}", apiOperation.value());
+        }
     }
 
     /**
