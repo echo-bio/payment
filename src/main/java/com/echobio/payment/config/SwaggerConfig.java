@@ -27,8 +27,8 @@ public class SwaggerConfig {
 
     public ApiInfo apiInfo() {
         return new ApiInfoBuilder()
-                .title("echo-bio API")
-                .description("echo-bio api doc")
+                .title("echo-bio payment API")
+                .description("echo-bio payment api doc")
                 .version("1.0")
                 .build();
     }
