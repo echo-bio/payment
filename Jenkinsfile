@@ -4,6 +4,7 @@ pipeline {
       registry = "echo-bio/payment"
       registryCredential="dockerhub"
       mvnHome = tool 'maven'
+      dockerHome = tool 'docker'
     }
   stages {
     stage('build') {
@@ -11,7 +12,8 @@ pipeline {
         withEnv(["MVN_HOME=$mvnHome"]) {
           sh '$MVN_HOME/bin/mvn clean package'
         }
-        sh 'docker build -t echo-bio-payment .'
+        withEnv(["DOCKER=$dockerHome"])
+        sh 'DOCKER/BIN/docker build -t echo-bio-payment .'
       }
     }
     stage('Tag and docker push') {
