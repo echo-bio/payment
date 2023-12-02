@@ -3,11 +3,14 @@ pipeline {
     environment {
       registry = "echo-bio/payment"
       registryCredential="dockerhub"
+      mvnHome = tool 'maven'
     }
   stages {
     stage('build') {
       steps {
-        sh 'mvn clean package'
+        withEnv(["MVN_HOME=$mvnHome"]) {
+          sh '$MVN_HOME/bin/mvn clean package'
+        }
         sh 'docker build -t echo-bio-payment .'
       }
     }
