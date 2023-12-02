@@ -11,8 +11,9 @@ pipeline {
         withEnv(["MVN_HOME=$mvnHome"]) {
           sh '$MVN_HOME/bin/mvn clean package'
         }
-        sh 'docker build -t echo-bio-payment .'
-
+        script {
+          dockerImage = docker.build(registry)
+        }
       }
     }
     stage('Tag and docker push') {
