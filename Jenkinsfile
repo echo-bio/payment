@@ -5,8 +5,9 @@ pipeline {
       registryCredential="dockerhub"
     }
   stages {
-    stage('docker build') {
+    stage('build') {
       steps {
+        sh 'mvn clean package'
         sh 'docker build -t echo-bio-payment .'
       }
     }
