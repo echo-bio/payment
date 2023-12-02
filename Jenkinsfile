@@ -11,7 +11,7 @@ pipeline {
         withEnv(["MVN_HOME=$mvnHome"]) {
           sh '$MVN_HOME/bin/mvn clean package'
         }
-        sh 'DOCKER/bin/docker build -t echo-bio-payment .'
+        sh 'docker build -t echo-bio-payment .'
 
       }
     }
