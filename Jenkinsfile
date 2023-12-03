@@ -1,7 +1,7 @@
 pipeline {
   agent any
     environment {
-      registry = "echo-bio/payment"
+      registry = "noah0812/payment"
       registryCredential="dockerhub"
       mvnHome = tool 'maven'
     }
