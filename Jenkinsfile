@@ -11,20 +11,26 @@ pipeline {
         withEnv(["MVN_HOME=$mvnHome"]) {
           sh '$MVN_HOME/bin/mvn clean package'
         }
-        sh 'docker build -t echo-bio-payment .'
+        script {
+          dockerImage = docker.build(registry)
+        }
       }
     }
     stage('Tag and docker push') {
       steps{
-        sh 'docker login -u taobi0812@gmail.com -p bitao123456'
-        sh 'docker tag echo-bio-payment noah0812/echo-bio-payment'
-        sh 'docker push noah0812/echo-bio-payment'
+        script{
+          docker.withRegistry( '', registryCredential ) {
+            dockerImage.push("v0.0.$BUILD_NUMBER")
+            dockerImage.push("latest")
+          }
+        }
       }
 
     }
     stage('docker clean') {
       steps{
-        sh 'docker rmi echo-bio-payment'
+        sh "docker rmi $registry"
+        sh "docker rmi $registry:v0.0.$BUILD_NUMBER"
       }
     }
   }
